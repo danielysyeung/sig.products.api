@@ -16,13 +16,13 @@ mongoClient.connect(mongodbUrl, function(err, database) {
 });
 
 app.get("/", function(req, res) {
-  console.log("Got a GET request for the Products API");
+  console.log("GET request for /");
   res.status(200);
-  return res.send("Welcome to SIG Products API!");
+  return res.send("<html><body><h2>SIG Products API</h2></body></html>");
 });
 
 app.get("/products", function(req, res) {
-  console.log("Got a GET request for /products");  
+  console.log("GET request for /products");  
   var fieldProjection = { "_id":0, "sku":1, "name":1, "description":1, "lastUpdatedTimestamp":1 };
   var queryBySku;  
   var queryResult;
@@ -52,7 +52,7 @@ app.get("/products", function(req, res) {
 });
 
 app.get("/products/:sku", function(req, res) {   
-  console.log("Got a GET request for /products/");
+  console.log("GET request for /products/");
   var queryBySku = { "sku":req.params.sku };  
   var fieldProjection = { "_id":0, "sku":1, "name":1, "description":1, "lastUpdatedTimestamp":1 };
   var queryResult;
@@ -80,7 +80,7 @@ app.get("/products/:sku", function(req, res) {
 
 app.post("/products", function(req, res) {
   var body = req.body;
-  console.log("Got a POST request for /products: %j", req.body);   
+  console.log("POST request for /products: %j", req.body);   
 
   if (!req.body.sku || !req.body.sku.trim() || !req.body.name || !req.body.name.trim()) {
     res.status(400);
@@ -110,7 +110,7 @@ app.post("/products", function(req, res) {
 
 app.put("/products/:sku", function(req, res) {
   var body = req.body;
-  console.log("Got a PUT request for /products/: %j", req.body);
+  console.log("PUT request for /products/: %j", req.body);
 
   if (!req.body.sku || !req.body.sku.trim() || !req.body.name || !req.body.name.trim()) {
     res.status(400);
@@ -150,7 +150,7 @@ app.put("/products/:sku", function(req, res) {
 });
 
 app.delete("/products/:sku", function (req, res) {
-  console.log("Got a DELETE request for /products/");
+  console.log("DELETE request for /products/");
   var queryBySku = { "sku":req.params.sku };  
   var queryResult;
   var collection = db.collection("product", function(err, collection) {
@@ -182,9 +182,9 @@ app.delete("/products/:sku", function (req, res) {
   });  
 });
 
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 8081;
 var server = app.listen(port, function () {
   var host = server.address().address;
   var port = server.address().port;
-  console.log("Products API App Listening at http://%s:%s", host, port);
+  console.log("Products API WebApp is listening at http://%s:%s", host, port);
 });
