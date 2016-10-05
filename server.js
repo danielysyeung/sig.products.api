@@ -15,12 +15,6 @@ mongoClient.connect(mongodbUrl, function(err, database) {
   db = database;  
 });
 
-app.get("/", function(req, res) {
-  console.log("GET request for /");
-  res.status(200);
-  return res.send("<html><body><h2>SIG Products API</h2></body></html>");
-});
-
 app.get("/products", function(req, res) {
   console.log("GET request for /products");  
   var fieldProjection = { "_id":0, "sku":1, "name":1, "description":1, "lastUpdatedTimestamp":1 };
