@@ -109,8 +109,9 @@ app.post("/products", function(req, res) {
 });
 
 app.put("/products/:sku", function(req, res) {
+  console.log("PUT request for /products/");
   var body = req.body;
-  console.log("PUT request for /products/: %j", req.body);
+  console.log("%j", req.body);
 
   if (!req.body.sku || !req.body.sku.trim() || !req.body.name || !req.body.name.trim()) {
     res.status(400);
