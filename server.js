@@ -4,6 +4,7 @@ var app = express();
 var mongodb = require("mongodb");
 var mongoClient = mongodb.MongoClient;
 var mongodbUrl = "mongodb://localhost:27017/sigdb";
+var httpHeaderAccessControlAllowOrigin = "*";
 var db;
 
 app.use(bodyParser.json());
@@ -19,6 +20,8 @@ app.get("/products", function(req, res) {
   console.log("GET request for /products");  
   var fieldProjection = { "_id":0, "sku":1, "name":1, "description":1, "lastUpdatedTimestamp":1 };
   var queryBySku;    
+  
+  res.setHeader("Access-Control-Allow-Origin", httpHeaderAccessControlAllowOrigin);
   
   // TODO filtering, sorting, pagination
   if (req.query.sku && req.query.sku.trim()) {
@@ -48,6 +51,9 @@ app.get("/products/:sku", function(req, res) {
   console.log("GET request for /products/");
   var queryBySku = { "sku":req.params.sku };  
   var fieldProjection = { "_id":0, "sku":1, "name":1, "description":1, "lastUpdatedTimestamp":1 };
+  
+  res.setHeader("Access-Control-Allow-Origin", httpHeaderAccessControlAllowOrigin);
+  
   var collection = db.collection("product", function(err, collection) {
     if (err) {
 	  console.log("Error accessing collection: ", err);
@@ -75,6 +81,8 @@ app.post("/products", function(req, res) {
   console.log("POST request for /products");   
   var body = req.body;
   console.log("%j", req.body);   
+  
+  res.setHeader("Access-Control-Allow-Origin", httpHeaderAccessControlAllowOrigin);
   
   if (!req.body.sku || !req.body.sku.trim() || !req.body.name || !req.body.name.trim()) {
     res.status(400);
@@ -107,6 +115,8 @@ app.put("/products/:sku", function(req, res) {
   var body = req.body;
   console.log("%j", req.body);
 
+  res.setHeader("Access-Control-Allow-Origin", httpHeaderAccessControlAllowOrigin);
+  
   if (!req.body.sku || !req.body.sku.trim() || !req.body.name || !req.body.name.trim()) {
     res.status(400);
 	return res.send("");
@@ -145,7 +155,10 @@ app.put("/products/:sku", function(req, res) {
 
 app.delete("/products/:sku", function (req, res) {
   console.log("DELETE request for /products/");
-  var queryBySku = { "sku":req.params.sku };    
+  var queryBySku = { "sku":req.params.sku };   
+
+  res.setHeader("Access-Control-Allow-Origin", httpHeaderAccessControlAllowOrigin);
+  
   var collection = db.collection("product", function(err, collection) {
     if (err) {
 	  console.log("Error accessing collection: ", err);
