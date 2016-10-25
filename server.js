@@ -7,6 +7,7 @@ var mongodbUrl = "mongodb://localhost:27017/sigdb";
 var httpHeaderAccessControlAllowOrigin = "*";
 var httpHeaderAccessControlAllowMethods = "GET, PUT, POST, DELETE, OPTIONS";
 var httpHeaderAccessControlAllowHeaders = "Accept, Content-Type";
+var dbQueryHardLimit = 100;
 var db;
 
 app.use(bodyParser.json());
@@ -22,14 +23,16 @@ app.get("/products", function (req, res) {
   console.log("GET request for /products");
   var fieldProjection = { "_id": 0, "sku": 1, "name": 1, "description": 1, "lastUpdatedTimestamp": 1 };
   var queryBySku;
+  var queryLimit;
 
   // For CORS response.  
   res.setHeader("Access-Control-Allow-Origin", httpHeaderAccessControlAllowOrigin);
 
-  // TODO filtering, sorting, pagination
+  // TODO filtering, sorting, range, pagination, etc.
   if (req.query.sku && req.query.sku.trim()) {
-    queryBySku = { "sku": req.query.sku };
+    queryBySku = { "sku": req.query.sku };    
   }
+  queryLimit = dbQueryHardLimit;
 
   var collection = db.collection("product", function (err, collection) {
     if (err) {
@@ -37,7 +40,7 @@ app.get("/products", function (req, res) {
       res.status(500);
       return res.send("");
     }
-    collection.find(queryBySku, fieldProjection).toArray(function (err, docs) {
+    collection.find(queryBySku, fieldProjection).limit(queryLimit).toArray(function (err, docs) {
       if (err) {
         console.log("Error querying document: ", err);
         res.status(500);
