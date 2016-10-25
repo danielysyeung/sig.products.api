@@ -5,6 +5,8 @@ var mongodb = require("mongodb");
 var mongoClient = mongodb.MongoClient;
 var mongodbUrl = "mongodb://localhost:27017/sigdb";
 var httpHeaderAccessControlAllowOrigin = "*";
+var httpHeaderAccessControlAllowMethods = "GET, PUT, POST, DELETE, OPTIONS";
+var httpHeaderAccessControlAllowHeaders = "Accept, Content-Type";
 var db;
 
 app.use(bodyParser.json());
@@ -16,11 +18,35 @@ mongoClient.connect(mongodbUrl, function(err, database) {
   db = database;  
 });
 
+// For cross-origin resource sharing (CORS) pre-flight requests.
+// Browsers skip pre-flight requests if requests is GET, HEAD, or POST and with regular headers like Accept, Content-Type, etc.
+app.options("/products", function(req, res) {
+  console.log("OPTIONS request for /products");  
+  res.setHeader("Access-Control-Allow-Origin", httpHeaderAccessControlAllowOrigin);
+  res.setHeader("Access-Control-Allow-Methods", httpHeaderAccessControlAllowMethods);
+  res.setHeader("Access-Control-Allow-Headers", httpHeaderAccessControlAllowHeaders);
+  res.status(200);
+  return res.send("");
+});
+
+// For cross-origin resource sharing (CORS) pre-flight requests.
+// Browsers skip pre-flight requests if requests is GET, HEAD, or POST and with regular headers like Accept, Content-Type, etc.
+app.options("/products/:sku", function(req, res) {
+  console.log("OPTIONS request for /products/");  
+  res.setHeader("Access-Control-Allow-Origin", httpHeaderAccessControlAllowOrigin);
+  res.setHeader("Access-Control-Allow-Methods", httpHeaderAccessControlAllowMethods);
+  res.setHeader("Access-Control-Allow-Headers", httpHeaderAccessControlAllowHeaders);
+  res.status(200);
+  return res.send("");
+});
+
+
 app.get("/products", function(req, res) {
   console.log("GET request for /products");  
   var fieldProjection = { "_id":0, "sku":1, "name":1, "description":1, "lastUpdatedTimestamp":1 };
   var queryBySku;    
-  
+
+  // For CORS response.  
   res.setHeader("Access-Control-Allow-Origin", httpHeaderAccessControlAllowOrigin);
   
   // TODO filtering, sorting, pagination
@@ -52,6 +78,7 @@ app.get("/products/:sku", function(req, res) {
   var queryBySku = { "sku":req.params.sku };  
   var fieldProjection = { "_id":0, "sku":1, "name":1, "description":1, "lastUpdatedTimestamp":1 };
   
+  // For CORS response.
   res.setHeader("Access-Control-Allow-Origin", httpHeaderAccessControlAllowOrigin);
   
   var collection = db.collection("product", function(err, collection) {
@@ -82,6 +109,7 @@ app.post("/products", function(req, res) {
   var body = req.body;
   console.log("%j", req.body);   
   
+  // For CORS response.
   res.setHeader("Access-Control-Allow-Origin", httpHeaderAccessControlAllowOrigin);
   
   if (!req.body.sku || !req.body.sku.trim() || !req.body.name || !req.body.name.trim()) {
@@ -115,6 +143,7 @@ app.put("/products/:sku", function(req, res) {
   var body = req.body;
   console.log("%j", req.body);
 
+  // For CORS response.
   res.setHeader("Access-Control-Allow-Origin", httpHeaderAccessControlAllowOrigin);
   
   if (!req.body.sku || !req.body.sku.trim() || !req.body.name || !req.body.name.trim()) {
@@ -157,6 +186,7 @@ app.delete("/products/:sku", function (req, res) {
   console.log("DELETE request for /products/");
   var queryBySku = { "sku":req.params.sku };   
 
+  // For CORS response.
   res.setHeader("Access-Control-Allow-Origin", httpHeaderAccessControlAllowOrigin);
   
   var collection = db.collection("product", function(err, collection) {
