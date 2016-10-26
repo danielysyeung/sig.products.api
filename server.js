@@ -5,7 +5,7 @@ var mongodb = require("mongodb");
 var mongoClient = mongodb.MongoClient;
 var mongodbUrl = "mongodb://localhost:27017/sigdb";
 var httpHeaderAccessControlAllowOrigin = "*";
-var httpHeaderAccessControlAllowMethods = "GET, PUT, POST, DELETE, OPTIONS";
+var httpHeaderAccessControlAllowMethods = "HEAD, GET, PUT, POST, DELETE, OPTIONS";
 var httpHeaderAccessControlAllowHeaders = "Accept, Content-Type";
 var about = { "Name": "ProductsService", "Version": "0.1", "Framework": "Node.js+MongoDB" };
 var dbQueryHardLimit = 100;
@@ -85,7 +85,6 @@ app.get("/products/:sku", function (req, res) {
 });
 
 app.post("/products", function (req, res) {
-
   console.log("POST request for /products");
   var body = req.body;
   console.log("%j", req.body);
@@ -222,8 +221,8 @@ app.options("/products/:sku", function (req, res) {
 });
 
 // Info about this service.
-app.get("/services/products/about", function (req, res) {
-  console.log("GET request for /services/products/about");
+app.get("/products/service/about", function (req, res) {
+  console.log("GET request for /products/service/about");
 
   // For CORS response.  
   res.setHeader("Access-Control-Allow-Origin", httpHeaderAccessControlAllowOrigin);
